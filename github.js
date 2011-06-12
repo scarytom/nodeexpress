@@ -6,7 +6,7 @@
 		var options = {
 		        host: "github.com",
 		        port: 80,
-		        path: "/api/v2/json/commits/list/" + userid + "/" + repo + "/master"
+		        path: "/api/v2/json/commits/list/" + userid + "/" + repo + "/master?page=1"
 		    };
 		
 		http.get(options, function(res) {

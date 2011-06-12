@@ -45,5 +45,11 @@ app.get("/:name/:repo/github.json", function(req, res) {
 	});
 });
 
+function poll() {
+	console.log("Hello");
+}
+
+setInterval(poll, 2000);
+
 app.listen(3000);
 console.log("Express server listening on port %d", app.address().port);
