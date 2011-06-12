@@ -2,11 +2,11 @@
 	"use strict";
 	var http = require("http");
 	
-	module.exports.search = function(userid, repo, handler) {
+	module.exports.search = function(userRepo, handler) {
 		var options = {
 		        host: "github.com",
 		        port: 80,
-		        path: "/api/v2/json/commits/list/" + userid + "/" + repo + "/master?page=1"
+		        path: "/api/v2/json/commits/list/" + userRepo + "/master?page=1"
 		    };
 		
 		http.get(options, function(res) {

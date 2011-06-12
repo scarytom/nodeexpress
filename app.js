@@ -2,6 +2,7 @@
 var express = require("express"),
     twitter = require("./twitter"),
     github = require("./github"),
+    gitAccts = [];
     app = module.exports = express.createServer();
 
 app.configure(function(){
@@ -45,11 +46,40 @@ app.get("/:name/:repo/github.json", function(req, res) {
 	});
 });
 
-function poll() {
-	console.log("Hello");
+function pollGithub() {
+	for(var index in gitAccts) {
+		github.search(gitAccts[index], function(data) {
+			if (data.error) {
+				return;
+			}
+			console.log(gitAccts[index] + " " + data.commits.length);
+		});
+	}
 }
 
-setInterval(poll, 2000);
+function pollTwitter() {
+	twitter.search("%23spa2011%20%23github", function(data) {
+		var tweets = data.results,
+		    index,
+		    text,
+		    hubindex;
+		
+		console.log("twitter " + data);
+		
+		for (index in tweets) {
+			text = tweets[index].text;
+			hubindex = text.indexOf("#github");
+			if (hubindex <= 0) {
+				continue;
+			}
+			console.log("adding git account/repo of " + text.substring(hubindex + 8));
+			gitAccts.push(text.substring(hubindex + 8));
+		}
+	});
+}
+
+setInterval(pollGithub, 2000);
+setInterval(pollTwitter, 10000);
 
 app.listen(3000);
 console.log("Express server listening on port %d", app.address().port);
