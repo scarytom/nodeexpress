@@ -27,9 +27,10 @@ app.get("/", function(req, res){
   });
 });
 
-app.get("/twitter", function(req, res) {
+app.get("/twitter/:id", function(req, res) {
 	res.render("tweets", {
-		title: "Tweets"
+		title: "Tweets",
+		message: "Well then... " + req.params.id
 	});
 });
 
