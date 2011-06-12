@@ -27,15 +27,14 @@ app.get("/", function(req, res){
   });
 });
 
-app.get("/twitter/:id.:format", function(req, res) {
-	if (req.params.format === "json") {
-		res.send({ value: "he he he", message: req.params.id});
-		return;
-	}
-	
-	res.render("tweets", {
-		title: "Tweets",
-		message: "Well then... " + req.params.id
+app.get("/:search/results.json", function(req, res) {
+	twitter.search(req.params.search, function(data) {
+		var tweets = data.results;
+		    responseText = "";
+		for (var index in tweets) {
+			responseText += tweets[index].text;
+		}
+		res.send(responseText);
 	});
 });
 

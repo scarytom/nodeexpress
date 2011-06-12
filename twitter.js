@@ -1,7 +1,6 @@
 (function() {
-	"user strict";
+	"use strict";
 	var http = require("http");
-	    
 	
 	module.exports.search = function(queryString, handler) {
 		var options = {
@@ -11,9 +10,12 @@
 		    };
 		
 		http.get(options, function(res) {
-		    console.log("Got response: " + res.statusCode);
+			var content = "";
 	        res.on('data', function(data) {
-	            handler(data);
+	            content += data;
+	        });
+	        res.on('end', function() {
+	        	handler(JSON.parse(content));
 	        });
 	    }).on('error', function(e) {
 	        console.log("Got error: " + e.message);
