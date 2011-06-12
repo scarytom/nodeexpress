@@ -27,5 +27,11 @@ app.get("/", function(req, res){
   });
 });
 
+app.get("/twitter", function(req, res) {
+	res.render("tweets", {
+		title: "Tweets"
+	});
+});
+
 app.listen(3000);
 console.log("Express server listening on port %d", app.address().port);
