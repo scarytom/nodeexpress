@@ -2,57 +2,39 @@
 var express = require("express"),
     twitter = require("./twitter"),
     github = require("./github"),
-    gitAccts = [];
+    gitAccts = {};
     app = module.exports = express.createServer();
 
 app.configure(function(){
-  app.set("views", __dirname + "/views");
-  app.set("view engine", "jade");
-  app.use(express.bodyParser());
-  app.use(express.methodOverride());
-  app.use(app.router);
-  app.use(express.static(__dirname + "/public"));
+	app.set("views", __dirname + "/views");
+	app.set("view engine", "jade");
+	app.use(express.bodyParser());
+	app.use(express.methodOverride());
+	app.use(app.router);
+	app.use(express.static(__dirname + "/public"));
 });
 
 app.configure("development", function(){
-  app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
+	app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
 });
 
 app.configure("production", function(){
-  app.use(express.errorHandler()); 
+	app.use(express.errorHandler()); 
 });
 
-// Routes
+//Routes
 app.get("/", function(req, res){
-  res.render("index", {
-    title: "Express"
-  });
-});
-
-app.get("/:search/results.json", function(req, res) {
-	twitter.search(req.params.search, function(data) {
-		var tweets = data.results;
-		    responseText = "";
-		for (var index in tweets) {
-			responseText += tweets[index].text;
-		}
-		res.send(responseText);
-	});
-});
-
-app.get("/:name/:repo/github.json", function(req, res) {
-	github.search(req.params.name, req.params.repo, function(data) {
-		res.send(data);
-	});
+	res.send(gitAccts);
 });
 
 function pollGithub() {
-	for(var index in gitAccts) {
-		github.search(gitAccts[index], function(data) {
+	for(var account in gitAccts) {
+		github.search(account, function(data) {
 			if (data.error) {
 				return;
 			}
-			console.log(gitAccts[index] + " " + data.commits.length);
+			gitAccts[account] = data.commits.length;
+			console.log(account + " " + data.commits.length);
 		});
 	}
 }
@@ -64,8 +46,6 @@ function pollTwitter() {
 		    text,
 		    hubindex;
 		
-		console.log("twitter " + data);
-		
 		for (index in tweets) {
 			text = tweets[index].text;
 			hubindex = text.indexOf("#github");
@@ -73,7 +53,7 @@ function pollTwitter() {
 				continue;
 			}
 			console.log("adding git account/repo of " + text.substring(hubindex + 8));
-			gitAccts.push(text.substring(hubindex + 8));
+			gitAccts[(text.substring(hubindex + 8))] = 0;
 		}
 	});
 }
