@@ -44,7 +44,8 @@ function pollTwitter() {
 		var tweets = data.results,
 		    index,
 		    text,
-		    hubindex;
+		    hubindex,
+		    account;
 		
 		for (index in tweets) {
 			text = tweets[index].text;
@@ -52,14 +53,18 @@ function pollTwitter() {
 			if (hubindex <= 0) {
 				continue;
 			}
-			console.log("adding git account/repo of " + text.substring(hubindex + 8));
-			gitAccts[(text.substring(hubindex + 8))] = 0;
+			account = text.substring(hubindex + 8);
+			if (gitAccts[account] === undefined) {
+				console.log("adding git account/repo of " + account);
+				gitAccts[account] = 0;
+			}
 		}
 	});
 }
 
-setInterval(pollGithub, 2000);
-setInterval(pollTwitter, 10000);
+setInterval(pollGithub, 60000);
+setInterval(pollTwitter, 60000);
+pollTwitter();
 
 app.listen(3000);
 console.log("Express server listening on port %d", app.address().port);
