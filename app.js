@@ -1,6 +1,7 @@
 "user strict";
 var express = require("express"),
     twitter = require("./twitter"),
+    github = require("./github"),
     app = module.exports = express.createServer();
 
 app.configure(function(){
@@ -35,6 +36,12 @@ app.get("/:search/results.json", function(req, res) {
 			responseText += tweets[index].text;
 		}
 		res.send(responseText);
+	});
+});
+
+app.get("/:name/:repo/github.json", function(req, res) {
+	github.search(req.params.name, req.params.repo, function(data) {
+		res.send(data);
 	});
 });
 
